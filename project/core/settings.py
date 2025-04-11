@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "orders.apps.OrdersConfig",
     "tasks.apps.TasksConfig",
     "rest_framework",
+    "drf_yasg",
 ]
 
 MIDDLEWARE = [
@@ -152,6 +153,8 @@ CELERY_BEAT_SCHEDULE = {
 }
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+# TODO this have to be removed
 DEFAULT_FROM_EMAIL = "noreply@email.com"
 ADMINS = [
     ("testuser", "test.user@email.com"),
