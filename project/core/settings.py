@@ -139,18 +139,34 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-CELERY_BROKER_URL = "redis://redis:6379"
+CELERY_BROKER_URL = "redis://redis:6379/0"
 
-CELERY_BEAT_SCHEDULE = {
-    "sample_task": {
-        "task": "core.tasks.sample_task",
-        "schedule": crontab(minute="*/1"),
-    },
-    "send_email_report": {
-        "task": "core.tasks.send_email_report",
-        "schedule": crontab(hour="*/1"),
+# CELERY_BEAT_SCHEDULE = {
+#     "sample_task": {
+#         "task": "core.tasks.sample_task",
+#         "schedule": crontab(minute="*/1"),
+#     },
+#     "send_email_report": {
+#         "task": "core.tasks.send_email_report",
+#         "schedule": crontab(hour="*/1"),
+#     },
+# }
+
+CELERY_TASK_QUEUES = {
+    "tasks": {
+        "exchange": "tasks",
+        "routing_key": "tasks",
+        "queue_arguments": {"x-max-priority": 10},  # Max priority for this queue
     },
 }
+
+CELERY_BROKER_TRANSPORT_OPTIONS = {
+    'priority_steps': list(range(10)),
+    'sep': ':',
+    'queue_order_strategy': 'priority',
+}
+CELERY_TASK_DEFAULT_QUEUE = "tasks"
+CELERY_WORKER_PREFETCH_MULTIPLIER = 1
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
