@@ -16,7 +16,7 @@ from pathlib import Path
 
 from celery.schedules import crontab
 
-import core.tasks # noqa: F401
+import core.tasks  # noqa: F401
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
