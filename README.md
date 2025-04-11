@@ -25,6 +25,8 @@ docker compose up -d --build
 ```bash
 chmod +x misc/pre-commit.sh
 cp misc/pre-commit.sh .git/hooks/pre-commit
+chmod +x misc/pre-push.sh
+cp misc/pre-push.sh .git/hooks/pre-push
 ```
 
 Application flows: https://excalidraw.com/#json=Gcr9aqYD2L9uPY1zkntQi,eAXzc1UsACgp1iQqMvvCgg
