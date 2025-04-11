@@ -1,0 +1,56 @@
+services:
+  web:
+    container_name: django
+    build: ./project
+    command: >
+      sh -c "
+        until pg_isready -h db -p 5432; do
+          echo 'Waiting for postgres...'
+          sleep 1
+        done &&
+        python manage.py migrate &&
+        python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - ./project/:/usr/src/app/
+    ports:
+      - 8000:8000
+    env_file:
+      - .env
+    depends_on:
+      - redis
+      - db
+
+  db:
+    image: postgres:16
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - .env
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:alpine
+
+  celery:
+    build: ./project
+    command: celery -A core worker -l info
+    volumes:
+      - ./project/:/usr/src/app/
+    env_file:
+      - .env
+    depends_on:
+      - redis
+
+  celery-beat:
+    build: ./project
+    command: celery -A core beat -l info
+    volumes:
+      - ./project/:/usr/src/app/
+    env_file:
+      - .env
+    depends_on:
+      - redis
+
+volumes:
+  postgres_data:
