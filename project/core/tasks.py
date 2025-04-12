@@ -2,6 +2,7 @@ import random
 import time
 
 from celery.utils.log import get_task_logger
+from django.conf import settings
 from django.core.management import call_command
 
 from core.celery import app
@@ -17,7 +18,7 @@ logger = get_task_logger(__name__)
 )
 def process_task(self, task_id: int) -> None:
     # added only for retry exemplification
-    if not random.choice([0, 1]):
+    if not settings.TESTING and not random.choice([0, 1]):
         raise Exception()
 
     from tasks.models import Task, TaskStatus

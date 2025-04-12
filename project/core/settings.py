@@ -43,7 +43,6 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "orders.apps.OrdersConfig",
     "tasks.apps.TasksConfig",
     "rest_framework",
     "drf_yasg",
@@ -166,22 +165,4 @@ CELERY_WORKER_PREFETCH_MULTIPLIER = 1
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
-# TODO this have to be removed
-DEFAULT_FROM_EMAIL = "noreply@email.com"
-ADMINS = [
-    ("testuser", "test.user@email.com"),
-]
-
 TESTING = "test" in sys.argv
-
-if not TESTING:
-    INTERNAL_IPS = ["127.0.0.1", "172.19.0.1"]
-
-    INSTALLED_APPS = [
-        *INSTALLED_APPS,
-        "debug_toolbar",
-    ]
-    MIDDLEWARE = [
-        "debug_toolbar.middleware.DebugToolbarMiddleware",
-        *MIDDLEWARE,
-    ]
