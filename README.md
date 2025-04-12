@@ -29,6 +29,11 @@ chmod +x misc/pre-push.sh
 cp misc/pre-push.sh .git/hooks/pre-push
 ```
 
+### Start project with multiple workers
+```bash
+    docker-compose up --scale celery=3
+```
+
 ## Swagger
 
 The API documentation is available at: http://localhost:8000/swagger/
