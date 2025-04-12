@@ -1,5 +1,3 @@
-from debug_toolbar.toolbar import debug_toolbar_urls
-from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
 
@@ -24,11 +22,5 @@ urlpatterns = [
         schema_view.with_ui("swagger", cache_timeout=0),
         name="schema-swagger-ui",
     ),
-    path("", include("orders.urls")),
     path("", include("tasks.urls")),
 ]
-
-if not settings.TESTING:
-    urlpatterns = [
-        *urlpatterns,
-    ] + debug_toolbar_urls()
