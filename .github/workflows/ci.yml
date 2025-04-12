@@ -20,7 +20,7 @@ jobs:
       - name: Build and start Docker containers
         run: docker compose up -d --build
 
-      - name: Run pre-commit script
+      - name: Run code quality checks
         run: ./misc/pre-commit.sh
 
   test:
@@ -37,5 +37,5 @@ jobs:
       - name: Build and start Docker containers
         run: docker compose up -d --build
 
-      - name: Run pre-push script
+      - name: Run tests
         run: ./misc/pre-push.sh
