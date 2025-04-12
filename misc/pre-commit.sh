@@ -12,5 +12,7 @@ docker exec "$CONTAINER_NAME" black .
 # Run Mypy for type checking inside the container
 docker exec "$CONTAINER_NAME" mypy .
 
+git add .
+
 # Exit with the status of the last command
 exit $?
