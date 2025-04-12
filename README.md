@@ -47,4 +47,4 @@ For monitoring Celery tasks, you can use Flower. Access it at: http://localhost:
 4. Used celery beat for scheduling a recurring celery task as the system has to periodically check if schedules can create new tasks that have to be computed.
 
 Application high level flows can be found in this [excalidraw](https://excalidraw.com/#json=CGgf7NHdMAOrrw10NQTin,ZyuNBwx1TnXyvXYd9zDnCw).
-Github issues created for this project can be found [here](https://github.com/GrozescuRares/django-celary-beat/issues).
+Github issues created for this project can be found [here](https://github.com/GrozescuRares/django-celary-beat/issues?q=is%3Aissue%20state%3Aclosed).
