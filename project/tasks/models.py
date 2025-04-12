@@ -15,10 +15,14 @@ class TaskSchedule(models.Model):
     task_schedule_id = models.AutoField(primary_key=True)
     operation = models.TextField(validators=[validate_addition_operation])
     priority = models.PositiveIntegerField(
-        validators=[MinValueValidator(0), MaxValueValidator(9)]
+        validators=[MinValueValidator(0), MaxValueValidator(9)], null=True
     )
-    every_x_days = models.PositiveIntegerField(validators=[MinValueValidator(1)])
-    every_x_hours = models.PositiveIntegerField(validators=[MinValueValidator(1)])
+    every_x_days = models.PositiveIntegerField(
+        validators=[MinValueValidator(1)], null=True
+    )
+    every_x_hours = models.PositiveIntegerField(
+        validators=[MinValueValidator(1)], null=True
+    )
     schedule_x_times = models.PositiveIntegerField(
         validators=[MinValueValidator(1)], default=1
     )  # Minimum value is 1

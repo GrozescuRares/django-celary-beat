@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 # Define the container name
 CONTAINER_NAME="django"
 
