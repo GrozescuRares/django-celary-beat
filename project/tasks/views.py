@@ -11,8 +11,8 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from tasks.models import Task
-from tasks.serializers import TaskSerializer
+from tasks.models import Task, TaskSchedule
+from tasks.serializers import TaskSerializer, TaskScheduleSerializer
 
 from core.tasks import process_task
 
@@ -101,4 +101,23 @@ class TaskViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
 
         return Response(
             {"tasks": serialized_tasks.data}, status=status.HTTP_202_ACCEPTED
+        )
+
+
+class TaskScheduleViewSet(
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.DestroyModelMixin,
+    viewsets.GenericViewSet,
+):
+    queryset = TaskSchedule.objects.all()
+    serializer_class = TaskScheduleSerializer
+
+    def create(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        task_schedule = serializer.save()
+        return Response(
+            self.get_serializer(task_schedule).data,
+            status=status.HTTP_202_ACCEPTED,
         )

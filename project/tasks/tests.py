@@ -2,7 +2,7 @@ from parameterized import parameterized
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
 from rest_framework import status
-from tasks.models import Task
+from tasks.models import Task, TaskSchedule
 
 
 class TaskViewSetTestCase(APITestCase):
@@ -163,3 +163,117 @@ class TaskViewSetTestCase(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(Task.objects.count(), 0)  # Ensure no tasks are created
+
+
+class TaskScheduleViewSetTestCase(APITestCase):
+    def test_create_task_schedule_happy(self) -> None:
+        response = self.client.post(
+            reverse("task-schedule-list"),
+            {
+                "operation": "1+1",
+                "priority": 5,
+                "every_x_days": 2,
+                "schedule_x_times": 3,
+            },
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_202_ACCEPTED)
+        self.assertEqual(TaskSchedule.objects.count(), 1)
+
+        task_schedule = TaskSchedule.objects.first()
+        self.assertEqual(task_schedule.operation, "1+1")
+        self.assertEqual(task_schedule.priority, 5)
+        self.assertEqual(task_schedule.every_x_days, 2)
+        self.assertEqual(task_schedule.schedule_x_times, 3)
+
+    def test_create_task_schedule_without_priority(self) -> None:
+        response = self.client.post(
+            reverse("task-schedule-list"),
+            {
+                "operation": "1+1",
+                "every_x_days": 2,
+                "schedule_x_times": 3,
+            },
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_202_ACCEPTED)
+        self.assertEqual(TaskSchedule.objects.count(), 1)
+
+        task_schedule = TaskSchedule.objects.first()
+        self.assertEqual(task_schedule.operation, "1+1")
+        self.assertEqual(task_schedule.priority, None)
+
+    def test_create_task_schedule_invalid_data(self) -> None:
+        response = self.client.post(
+            reverse("task-schedule-list"),
+            {
+                "operation": "invalid_operation",
+                "priority": 5,
+                "every_x_days": 2,
+                "schedule_x_times": 3,
+            },
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(TaskSchedule.objects.count(), 0)
+
+    def test_create_task_schedule_missing_every_x_fields(self) -> None:
+        response = self.client.post(
+            reverse("task-schedule-list"),
+            {
+                "operation": "1+1",
+                "priority": 5,
+                "schedule_x_times": 3,
+            },
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(TaskSchedule.objects.count(), 0)
+
+    def test_retrieve_task_schedule_happy(self) -> None:
+        task_schedule = TaskSchedule.objects.create(
+            operation="1+1",
+            priority=5,
+            every_x_days=2,
+            schedule_x_times=3,
+        )
+        Task.objects.create(
+            operation="1+1",
+            priority=5,
+            task_schedule=task_schedule,
+        )
+
+        response = self.client.get(
+            reverse("task-schedule-detail", args=[task_schedule.task_schedule_id])
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            response.data["task_schedule_id"], task_schedule.task_schedule_id
+        )
+        self.assertEqual(len(response.data["tasks"]), 1)
+
+    def test_retrieve_task_schedule_not_found(self) -> None:
+        response = self.client.get(reverse("task-schedule-detail", args=[999]))
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_delete_task_schedule_happy(self) -> None:
+        task_schedule = TaskSchedule.objects.create(
+            operation="1+1",
+            priority=5,
+            every_x_days=2,
+            schedule_x_times=3,
+        )
+
+        response = self.client.delete(
+            reverse("task-schedule-detail", args=[task_schedule.task_schedule_id])
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(TaskSchedule.objects.count(), 0)
+
+    def test_delete_task_schedule_not_found(self) -> None:
+        response = self.client.delete(reverse("task-schedule-detail", args=[999]))
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
