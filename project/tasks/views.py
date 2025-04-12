@@ -85,6 +85,13 @@ class TaskViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
 
         created_tasks = []
         with transaction.atomic():
+            """
+            Creates tasks in a batch and triggers their processing as a group.
+
+            - Validates and saves each task from the provided data.
+            - Ensures atomicity, so either all tasks are created or none.
+            - Groups the tasks for asynchronous processing using Celery.
+            """
             for task_data in tasks_data:
                 serializer = self.get_serializer(data=task_data)
                 serializer.is_valid(raise_exception=True)
