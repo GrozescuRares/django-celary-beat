@@ -24,7 +24,9 @@ class TaskSchedule(models.Model):
         validators=[MinValueValidator(1)], null=True
     )
     schedule_x_times = models.PositiveIntegerField(
-        validators=[MinValueValidator(1)], default=1
+        validators=[MinValueValidator(1)],
+        default=1,
+        db_index=True,
     )  # Minimum value is 1
     checked_scheduling_at = models.DateTimeField(auto_now_add=True, db_index=True)
 

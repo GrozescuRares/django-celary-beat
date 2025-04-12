@@ -11,7 +11,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from tasks.models import Task, TaskSchedule
+from tasks.models import Task, TaskSchedule, TaskStatus
 from tasks.serializers import TaskSerializer, TaskScheduleSerializer
 
 from core.tasks import process_task
@@ -37,8 +37,8 @@ class TaskViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
 
     def destroy(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         task = self.get_object()
-        if task.result is not None:
-            raise ValidationError("Cannot delete a task that already has a result.")
+        if task.status != TaskStatus.PENDING:
+            raise ValidationError("Cannot delete a task which is processed.")
         task.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 

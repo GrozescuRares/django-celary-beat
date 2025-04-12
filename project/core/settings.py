@@ -14,6 +14,7 @@ import os
 import sys
 from pathlib import Path
 
+from celery.schedules import crontab
 
 import core.tasks  # noqa: F401
 
@@ -140,16 +141,12 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", default="redis://redis:6379")
 
-# CELERY_BEAT_SCHEDULE = {
-#     "sample_task": {
-#         "task": "core.tasks.sample_task",
-#         "schedule": crontab(minute="*/1"),
-#     },
-#     "send_email_report": {
-#         "task": "core.tasks.send_email_report",
-#         "schedule": crontab(hour="*/1"),
-#     },
-# }
+CELERY_BEAT_SCHEDULE = {
+    "process_task_schedules_every_minute": {
+        "task": "core.tasks.schedule_tasks",
+        "schedule": crontab(minute="*/1"),  # Runs every minute
+    },
+}
 
 CELERY_TASK_QUEUES = {
     "tasks": {
