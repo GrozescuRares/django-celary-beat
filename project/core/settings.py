@@ -14,7 +14,6 @@ import os
 import sys
 from pathlib import Path
 
-from celery.schedules import crontab
 
 import core.tasks  # noqa: F401
 
@@ -139,7 +138,7 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-CELERY_BROKER_URL = "redis://redis:6379/0"
+CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", default="redis://redis:6379")
 
 # CELERY_BEAT_SCHEDULE = {
 #     "sample_task": {
@@ -161,9 +160,9 @@ CELERY_TASK_QUEUES = {
 }
 
 CELERY_BROKER_TRANSPORT_OPTIONS = {
-    'priority_steps': list(range(10)),
-    'sep': ':',
-    'queue_order_strategy': 'priority',
+    "priority_steps": list(range(10)),
+    "sep": ":",
+    "queue_order_strategy": "priority",
 }
 CELERY_TASK_DEFAULT_QUEUE = "tasks"
 CELERY_WORKER_PREFETCH_MULTIPLIER = 1
