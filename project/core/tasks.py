@@ -1,3 +1,4 @@
+import random
 import time
 
 from celery.utils.log import get_task_logger
@@ -7,8 +8,17 @@ from core.celery import app
 logger = get_task_logger(__name__)
 
 
-@app.task
-def process_task(task_id: int) -> None:
+@app.task(
+    bind=True,
+    autoretry_for=(Exception,),
+    retry_backoff=True,
+    retry_kwargs={"max_retries": 5},
+)
+def process_task(self, task_id: int) -> None:
+    # added only for retry exemplification
+    if not random.choice([0, 1]):
+        raise Exception()
+
     from tasks.models import Task, TaskStatus
 
     # TODO should this be wrapped into an atomic transaction?
