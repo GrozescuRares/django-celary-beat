@@ -69,3 +69,36 @@ class TaskViewSetTestCase(APITestCase):
         response = self.client.get(reverse("task-detail", args=["nonexistent-task-id"]))
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_destroy_task_happy(self) -> None:
+        task = Task.objects.create(
+            operation="1+1",
+            priority=5,
+            status="PENDING",
+            result=None,
+        )
+
+        response = self.client.delete(reverse("task-detail", args=[task.task_id]))
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(Task.objects.count(), 0)
+
+    def test_destroy_task_with_result(self) -> None:
+        task = Task.objects.create(
+            operation="1+1",
+            priority=5,
+            status="SUCCESS",
+            result="2",
+        )
+
+        response = self.client.delete(reverse("task-detail", args=[task.task_id]))
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(Task.objects.count(), 1)
+
+    def test_destroy_task_not_found(self) -> None:
+        response = self.client.delete(
+            reverse("task-detail", args=["nonexistent-task-id"])
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
