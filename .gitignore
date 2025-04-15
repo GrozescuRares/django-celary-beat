@@ -5,3 +5,5 @@ env
 .DS_Store
 staticfiles
 .idea/
+project/.venv
+project/celerybeat-schedule
