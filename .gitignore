@@ -7,3 +7,4 @@ staticfiles
 .idea/
 project/.venv
 project/celerybeat-schedule
+.env
