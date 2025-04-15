@@ -71,7 +71,23 @@ class TaskViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
                     "tasks": openapi.Schema(
                         type=openapi.TYPE_ARRAY,
                         items=openapi.Schema(type=openapi.TYPE_OBJECT),
-                    )
+                    ),
+                    "errors": openapi.Schema(
+                        type=openapi.TYPE_ARRAY,
+                        items=openapi.Schema(
+                            type=openapi.TYPE_OBJECT,
+                            properties={
+                                "index": openapi.Schema(
+                                    type=openapi.TYPE_INTEGER,
+                                    description="Index of the task in the request",
+                                ),
+                                "errors": openapi.Schema(
+                                    type=openapi.TYPE_OBJECT,
+                                    description="Validation errors for the task",
+                                ),
+                            },
+                        ),
+                    ),
                 },
             ),
             400: "Bad Request",
