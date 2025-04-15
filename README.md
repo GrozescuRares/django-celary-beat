@@ -17,11 +17,17 @@ git clone https://github.com/GrozescuRares/django-celary-beat.git
 cd django-celary-beat
 ```
 
-### 2. Spin up the containers
+### 2. Create .env file
+```bash
+cp .env.dist .env
+```
+Please update POSTGRES variables and SECRET_KEY.
+
+### 3. Spin up the containers
 ```bash
 docker compose up -d --build
 ```
-### 3. Install git hooks
+### 4. Install git hooks
 ```bash
 chmod +x misc/pre-commit.sh
 cp misc/pre-commit.sh .git/hooks/pre-commit
