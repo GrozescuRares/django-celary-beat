@@ -165,24 +165,28 @@ class TaskViewSetTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(Task.objects.count(), 0)
 
-    def test_batch_request_empty_list(self) -> None:
-        response = self.client.post(reverse("task-batch-request"), [], format="json")
-
-        self.assertEqual(response.status_code, status.HTTP_202_ACCEPTED)
-        self.assertEqual(Task.objects.count(), 0)
-
-    def test_batch_request_atomic_transaction(self) -> None:
+    def test_batch_request_partial_invalid_data(self) -> None:
         tasks_data = [
-            {"operation": "1+1", "priority": 5},
-            {"operation": "invalid_operation"},  # This will cause validation to fail
+            {"operation": "1+1", "priority": "high"},  # Invalid priority
+            {"operation": "2+3"},
         ]
 
         response = self.client.post(
             reverse("task-batch-request"), tasks_data, format="json"
         )
 
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(Task.objects.count(), 0)  # Ensure no tasks are created
+        self.assertEqual(response.status_code, status.HTTP_202_ACCEPTED)
+        self.assertEqual(Task.objects.count(), 1)
+        self.assertEqual(
+            response.data["errors"],
+            [{"index": 0, "errors": {"priority": ["A valid integer is required."]}}],
+        )
+
+    def test_batch_request_empty_list(self) -> None:
+        response = self.client.post(reverse("task-batch-request"), [], format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_202_ACCEPTED)
+        self.assertEqual(Task.objects.count(), 0)
 
 
 class TaskScheduleViewSetTestCase(APITestCase):
